@@ -71,19 +71,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>include;$(IncludePath)</IncludePath>
-    <TargetName>vanilla-tweaks</TargetName>
+    <TargetName>vanilla-tweaks-gui</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>include;$(IncludePath)</IncludePath>
-    <TargetName>vanilla-tweaks</TargetName>
+    <TargetName>vanilla-tweaks-gui</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>include;$(IncludePath)</IncludePath>
-    <TargetName>vanilla-tweaks</TargetName>
+    <TargetName>vanilla-tweaks-gui</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>include;$(IncludePath)</IncludePath>
-    <TargetName>vanilla-tweaks</TargetName>
+    <TargetName>vanilla-tweaks-gui</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
