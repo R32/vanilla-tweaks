@@ -1,3 +1,45 @@
+vanilla tweaks gui
+-------
+
+This GUI tool is used to modify the WoW.exe file of version 1.12,
+
+These offset addresses are stolen from <https://github.com/brndd/vanilla-tweaks>
+
+downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/releases)
+
+## Usage
+
+1. Click the `Open` button to locate WoW.exe 1.12
+
+2. Adjust via controls(Those controls are updated based on the actual value of the WoW.exe file)
+
+3. Click the `Sava as` button to save
+
+## Current patches
+
+- autoloot
+
+  - `Origin` : Press the `shift` key to pick up automatically
+
+  - `Reverse` : Press the `shift` key to pick up **manually**
+
+  - `Aways` :
+
+- nameplate distance : Adjust the distance of the nameplate to 20~41 yards
+
+- screen fov :  no idea
+
+
+## CHANGTES
+
+`0.2` : Added `en-us` resources for the English version
+
+
+
+-------
+
+
+
 香草微调(自动拾取修改器)
 -------
 
@@ -19,65 +61,18 @@
 
 ## 功能
 
-### 自动拾取
+- 自动拾取
 
-- `原始` : 按下 `shift` 键将自动拾取
+  - `原始` : 按下 `shift` 键将自动拾取
 
-- `反选` : 按下 `shift` 键将**手动拾取**, 网络上的自动拾取工具基本都属于这个类型
+  - `反选` : 按下 `shift` 键将**手动拾取**, 网络上的自动拾取工具基本都属于这个类型
 
-- `总是` : 总是自动拾取
+  - `总是` : 总是自动拾取
 
-### 姓名版距离
+- 姓名版距离 : 调整姓名版的显示距离 20-41 码
 
-调整姓名版的显示距离 20-41 码
-
-### 屏幕 FOV
-
-只听说 FoV 选项可能更适用宽屏
+- 屏幕 FOV : 只听说 FoV 选项可能更适用宽屏
 
 ## 更新
 
 `0.2` : 仅添加了英语资源用于老外
-
-
-
-
-------
-
-
-
-
-vanilla tweaks gui(autoloot)
--------
-
-This GUI tool is used to modify the WoW.exe file of version 1.12 [vanilla-tweaks-gui.exe(18KB) donwloads](https://github.com/R32/vanilla-tweaks/releases)
-
-These offset addresses are taken from <https://github.com/brndd/vanilla-tweaks>
-
-## Usage
-
-1. Click the `Open` button to locate WoW.exe 1.12
-
-2. Adjust via controls(Those controls are updated based on the actual value of the WoW.exe file)
-
-3. Click the `Sava as` button to save
-
-### autoloot
-
-- `Origin` : Press the 'shift' key to pick up automatically
-
-- `Reverse` : Press the 'shift' key to pick up **manually**
-
-- `Aways` :
-
-### nameplate distance
-
-Adjust the distance of the nameplate to 20~41 yards
-
-### screen fov
-
-no idea
-
-## CHANGTES
-
-`0.2` : Added `en-us` resources for the English version
