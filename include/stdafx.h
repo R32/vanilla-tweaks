@@ -13,6 +13,7 @@
 #include <wchar.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 // #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -28,8 +29,10 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // #include <vssym32.h>
 // #include <uxtheme.h>
 // #pragma comment(lib, "uxtheme.lib")
-// #include <dwmapi.h>
-// #pragma comment(lib, "dwmapi.lib")
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
+
+#include <shobjidl_core.h>
 
 #include "resource.h"
 

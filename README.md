@@ -17,21 +17,27 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 ## Current patches
 
-- autoloot
+- Autoloot
 
-  - `Origin` : Press the `shift` key to pick up automatically
+  - `Origin` : Hold the `Shift` key to pick up items automatically
 
-  - `Reverse` : Press the `shift` key to pick up **manually**
+  - `Reverse` : Hold the `Shift` key to pick up items **manually**.
 
-  - `Aways` :
+  - `Aways` : Aways pick up items automatically.
 
 - nameplate distance : Adjust the distance of the nameplate to 20~41 yards
 
-- screen fov :  no idea
+- FOV :
 
+  - `Origin` : 1.5708
+
+  - `Wide`   : 1.925
+
+  - `Custom` : 2.1 (customizable)
 
 ## CHANGTES
 
+`0.3` : Added an input edit box for customizing the value of FOV, e.g. : `2.1` can be used for ultrawide.
 `0.2` : Added `en-us` resources for the English version
 
 
@@ -71,8 +77,16 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 - 姓名版距离 : 调整姓名版的显示距离 20-41 码
 
-- 屏幕 FOV : 只听说 FoV 选项可能更适用宽屏
+- FOV :
+
+  - `原始` : `1.5708`
+
+  - `宽屏` : `1.925`
+
+  - `自定义` : `2.1`, 可修改
+
 
 ## 更新
 
+`0.3` : 添加了一个输入框用于自定义 fov 的值, 例如 : `2.1` 可用于更宽的屏幕.
 `0.2` : 仅添加了英语资源用于老外

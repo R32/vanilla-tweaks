@@ -31,3 +31,34 @@ int is_vanilla(WCHAR *absfile)
 		return 0;
 	return 1;
 }
+
+BOOL IsSystemInDarkMode()
+{
+	HKEY hkey;
+	DWORD value = 1;
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", 0, KEY_READ, &hkey) == ERROR_SUCCESS) {
+		DWORD size = sizeof(value);
+		RegQueryValueEx(hkey, L"AppsUseLightTheme", NULL, NULL, (LPBYTE)&value, &size);
+		RegCloseKey(hkey);
+	}
+	return value == 0;
+}
+
+int trim_tail_zero(wchar_t *ptr, int len)
+{
+	int i = 0;
+	while (i < len && ptr[i++] != '.') {
+	}
+	i += 2; // Keep at least 2 zeros
+	int count = 0;
+	while (i < len) {
+		if (ptr[i++] != '0') {
+			count = 0;
+			continue;
+		}
+		count++;
+		if (i == len || count == 3)
+			return i - count;
+	}
+	return len;
+}
