@@ -147,21 +147,26 @@ static void wow_analyze(HWND hwnd)
 	// fov
 	struct fov *fov = &hacks.fov;
 	const float fs = *(float*)(wowinfo.content + fov->address);
+	BOOL disable_fov = 0;
 	if (fabsf(fs - fov->origin) < 0.00001) {
 		CTRL_SETCHECK(hwnd, IDC_FOV_ORIGIN, 1);
 	} else if (fabsf(fs - fov->wide) < 0.00001) {
 		CTRL_SETCHECK(hwnd, IDC_FOV_WIDE, 1);
-	} else {
+	} else if (fs >= 1.5f && fs <= 3.0f) {
 		WCHAR buff[16];
 		int len = _snwprintf_s(buff, ARRAYSIZE(buff), _TRUNCATE, L"%.5f", fs);
 		buff[trim_tail_zero(buff, len)] = 0; // trim zeros
 		CTRL_SETTEXT(hwnd, IDC_FOV_EDITTEXT, buff);
 		CTRL_SETCHECK(hwnd, IDC_FOV_ULTRA, 1);
+	} else {
+		disable_fov = 1;
 	}
-	CTRL_ENABLE(hwnd, IDC_FOV_ORIGIN);
-	CTRL_ENABLE(hwnd, IDC_FOV_WIDE);
-	CTRL_ENABLE(hwnd, IDC_FOV_ULTRA);
-	CTRL_ENABLE(hwnd, IDC_FOV_EDITTEXT);
+	if (!disable_fov) {
+		CTRL_ENABLE(hwnd, IDC_FOV_ORIGIN);
+		CTRL_ENABLE(hwnd, IDC_FOV_WIDE);
+		CTRL_ENABLE(hwnd, IDC_FOV_ULTRA);
+		CTRL_ENABLE(hwnd, IDC_FOV_EDITTEXT);
+	}
 	if (!disable_loot || !disable_plate) {
 		CTRL_ENABLE(hwnd, IDC_BUTTON_SAVEAS);
 	}
@@ -222,6 +227,8 @@ error:
 
 static float fov_clamp(HWND hwnd)
 {
+	if (!CTRL_IS_ENABLED(hwnd, IDC_FOV_ORIGIN))
+		return 0.f;
 	float result = 0.;
 	WCHAR buf[16];
 	HWND edit = GetDlgItem(hwnd, IDC_FOV_EDITTEXT);
@@ -271,18 +278,20 @@ static void wow_patches(HWND hwnd)
 			*dst = src;
 	}
 	// fov
-	struct fov *fov = &hacks.fov;
-	float *dst = (float*)(wowinfo.content + fov->address);
-	float src = 0;
-	if (CTRL_GETCHECK(hwnd, IDC_FOV_ORIGIN)) {
-		src = fov->origin;
-	} else if (CTRL_GETCHECK(hwnd, IDC_FOV_WIDE)) {
-		src = fov->wide;
-	} else if (CTRL_GETCHECK(hwnd, IDC_FOV_ULTRA)) {
-		src = fov_clamp(hwnd);
+	if (CTRL_IS_ENABLED(hwnd, IDC_FOV_ORIGIN)) {
+		struct fov *fov = &hacks.fov;
+		float *dst = (float*)(wowinfo.content + fov->address);
+		float src = 0;
+		if (CTRL_GETCHECK(hwnd, IDC_FOV_ORIGIN)) {
+			src = fov->origin;
+		} else if (CTRL_GETCHECK(hwnd, IDC_FOV_WIDE)) {
+			src = fov->wide;
+		} else if (CTRL_GETCHECK(hwnd, IDC_FOV_ULTRA)) {
+			src = fov_clamp(hwnd);
+		}
+		if (src && fabsf(src - *dst) >= 0.001)
+			*dst = src;
 	}
-	if (src && fabsf(src - *dst) >= 0.001)
-		*dst = src;
 }
 
 static void wow_saveas(HWND hwnd)
