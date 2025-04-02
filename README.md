@@ -37,8 +37,9 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 ## CHANGTES
 
-`0.3` : Added an input edit box for customizing the value of FOV, e.g. : `2.1` can be used for ultrawide.
-`0.2` : Added `en-us` resources for the English version
+- `0.3` : Added an input edit box for customizing the value of FOV, e.g. : `2.1` can be used for ultrawide.
+
+- `0.2` : Added `en-us` resources for the English version
 
 
 
@@ -53,7 +54,7 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 所修改的偏移地址来自于 <https://github.com/brndd/vanilla-tweaks> 的其中几个
 
-工具(仅18KB)已打包好放在了[发布页面](https://github.com/R32/vanilla-tweaks/releases)
+工具(仅20KB)已打包好放在了[发布页面](https://github.com/R32/vanilla-tweaks/releases)
 
 ## 使用
 
@@ -88,5 +89,6 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 ## 更新
 
-`0.3` : 添加了一个输入框用于自定义 fov 的值, 例如 : `2.1` 可用于更宽的屏幕.
-`0.2` : 仅添加了英语资源用于老外
+- `0.3` : 添加了一个输入框用于自定义 fov 的值, 例如 : `2.1` 可用于更宽的屏幕.
+
+- `0.2` : 仅添加了英语资源用于老外
