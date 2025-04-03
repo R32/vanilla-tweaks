@@ -25,7 +25,7 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
   - `Aways` : Aways pick up items automatically.
 
-- nameplate distance : Adjust the distance of the nameplate to 20~41 yards
+- Nameplate Distance : Adjust the distance of the nameplate to 20~41 yards
 
 - FOV :
 
@@ -35,7 +35,17 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
   - `Custom` : 2.1 (customizable)
 
+- Camera Glitch :
+
+  - `Origin` :
+
+  - `Patch` :
+
 ## CHANGTES
+
+- `0.3.1` :
+  - Added Camera glitch patch, See #1
+  - Changed `Save as` to `Apply`
 
 - `0.3` : Added an input edit box for customizing the value of FOV, e.g. : `2.1` can be used for ultrawide.
 
@@ -54,7 +64,7 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 所修改的偏移地址来自于 <https://github.com/brndd/vanilla-tweaks> 的其中几个
 
-工具(仅20KB)已打包好放在了[发布页面](https://github.com/R32/vanilla-tweaks/releases)
+工具(仅30KB)已打包好放在了[发布页面](https://github.com/R32/vanilla-tweaks/releases)
 
 ## 使用
 
@@ -86,8 +96,17 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
   - `自定义` : `2.1`, 可修改
 
+- 镜头乱晃 :
+
+  - `原始` :
+
+  - `补丁` :
 
 ## 更新
+
+- `0.3.1` :
+  - 添加了镜头乱晃的修正补丁, 见 #1
+  - 更改了 "另存为" 按钮为 "应用"
 
 - `0.3` : 添加了一个输入框用于自定义 fov 的值, 例如 : `2.1` 可用于更宽的屏幕.
 

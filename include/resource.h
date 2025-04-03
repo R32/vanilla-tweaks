@@ -25,10 +25,14 @@
 #define IDC_FOV_EDITTEXT                1008
 #define IDC_NAMEPLATE_SLIDER            1009
 #define IDC_NAMEPLATE_NUMBER            1010
-#define IDC_BUTTON_SAVEAS               1011
+#define IDC_BUTTON_APPLY                1011
 #define IDC_BUTTON_OPEN                 1012
-#define IDC_PROGRESS1                   1013
 
+#define IDC_CAMERA_ORIGIN               1015
+#define IDC_CAMERA_PATCH                1016
+
+#define IDW_SUCCESS                     1020
+#define IDI_APPICON                     1021
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

@@ -31,6 +31,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 // #pragma comment(lib, "uxtheme.lib")
 #include <dwmapi.h>
 #pragma comment(lib, "dwmapi.lib")
+#pragma comment (lib, "winmm.lib")
 
 #include <shobjidl_core.h>
 

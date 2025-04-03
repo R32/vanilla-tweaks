@@ -1,6 +1,55 @@
 #include "stdafx.h"
 #include "auxiliary.h"
 
+// Camera skip glitch fix.
+#define CG_PATCH(x) BYTE camera_patch_##x[]
+#define CG_ORIGIN(x) BYTE camera_origin_##x[]
+static CG_PATCH(0) = {
+	0x55, 0x8b, 0x05, 0x48, 0x4e, 0x88, 0x00, 0x8b, 0x0d, 0x44, 0x4e, 0x88, 0x00, 0xe9, 0x33, 0x90,
+	0x32, 0x00, 0x83, 0xc0, 0x32, 0x83, 0xc1, 0x32, 0x3b, 0x0d, 0xa8, 0xeb, 0xc4, 0x00, 0x7e, 0x03,
+	0x83, 0xe9, 0x01, 0x3b, 0x05, 0xac, 0xeb, 0xc4, 0x00, 0x7e, 0x03, 0x83, 0xe8, 0x01, 0x83, 0xe9,
+	0x32, 0x83, 0xe8, 0x32, 0x89, 0x05, 0x48, 0x4e, 0x88, 0x00, 0x89, 0x0d, 0x44, 0x4e, 0x88, 0x00,
+	0x5d, 0xeb, 0x0d
+};
+static CG_PATCH(1) = {
+	0xe9, 0xb1, 0x8a, 0x32, 0x00
+};
+static CG_PATCH(2) = {
+	0x8b, 0x35, 0x48, 0x4e, 0x88, 0x00
+};
+static CG_PATCH(3) = {
+	0x83, 0xf8, 0x32, 0x7d, 0x03, 0x83, 0xc0, 0x01, 0x83, 0xf9, 0x32, 0x7d, 0x03, 0x83, 0xc1, 0x01,
+	0xe9, 0xb8, 0x6f, 0xcd, 0xff
+};
+static CG_PATCH(4) = {
+	0x8d, 0x4d, 0xf0, 0x51, 0xff, 0x35, 0x00, 0x4e, 0x88, 0x00, 0xff, 0x15, 0x50, 0xf6, 0x7f, 0x00,
+	0x8b, 0x45, 0xf0, 0x8b, 0x15, 0x44, 0x4e, 0x88, 0x00, 0xe9, 0x35, 0x75, 0xcd, 0xff
+};
+// Copies from .exe
+static CG_ORIGIN(0) = {
+	0x55, 0x8b, 0xec, 0x83, 0xec, 0x10, 0x8d, 0x45, 0xf0, 0x50, 0x33, 0xc9, 0xe8, 0x4f, 0x8f, 0x00,
+	0x00, 0x50, 0xff, 0x15, 0x64, 0xf6, 0x7f, 0x00, 0x8b, 0x45, 0xf8, 0x99, 0x2b, 0xc2, 0x8b, 0xc8,
+	0x8b, 0x45, 0xfc, 0x99, 0x2b, 0xc2, 0xd1, 0xf8, 0xd1, 0xf9, 0x50, 0x51, 0x89, 0x0d, 0x38, 0x4e,
+	0x88, 0x00, 0xa3, 0x3c, 0x4e, 0x88, 0x00, 0xff, 0x15, 0x5c, 0xf6, 0x7f, 0x00, 0x8b, 0xe5, 0x5d,
+	0xc3, 0x90, 0x90
+};
+static CG_ORIGIN(1) = {
+	0x8b, 0x45, 0xf0, 0x8b, 0x15
+};
+static CG_ORIGIN(2) = {
+	0x8b, 0x35, 0x3c, 0x4e, 0x88, 0x00
+};
+static CG_ORIGIN(3) = {
+	0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc,
+	0xcc, 0xcc, 0xcc, 0xcc, 0xcc
+};
+static CG_ORIGIN(4) = {
+	0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc,
+	0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc, 0xcc
+};
+#define _P(x) (camera_patch_##x)
+#define _R(x) (camera_origin_##x)
+
 static struct hackscode {
 	struct autoloot {
 		DWORD address[2];
@@ -21,6 +70,13 @@ static struct hackscode {
 		float wide;
 		float ultra;
 	} fov;
+
+	struct camera {
+		DWORD address[5];
+		DWORD sizes[5];
+		BYTE *patches[5];
+		BYTE *origins[5];
+	} camera;
 } hacks = {
 	// Quickloot
 	.autoloot = {
@@ -32,8 +88,8 @@ static struct hackscode {
 	// Nameplate range
 	.nameplate = {
 		.address = 0x40c448,
-		.fmin  = 20.f,
-		.fmax  = 41.f,
+		.fmin = 20.f,
+		.fmax = 41.f,
 	},
 	// Screen fov
 	.fov = {
@@ -41,13 +97,28 @@ static struct hackscode {
 		.origin = 1.5708f,
 		.wide = 1.925f,
 		.ultra = 2.1f,
+	},
+	// Camera fix.
+	.camera = {
+		.address = {0x02ccd0, 0x02d326, 0x02d334, 0x355d15, 0x355ddc},
+		.sizes = {sizeof(_P(0)), sizeof(_P(1)), sizeof(_P(2)), sizeof(_P(3)), sizeof(_P(4))},
+		.patches = {_P(0), _P(1), _P(2), _P(3), _P(4)},
+		.origins = {_R(0), _R(1), _R(2), _R(3), _R(4)},
 	}
 };
+#undef _P
+#undef _R
 
 static struct {
 	DWORD size;
 	HANDLE mapping;
 	BYTE *content;
+	struct state {
+		int camera;
+		int autoloot;
+		float fov;
+		float distance;
+	} state;
 } wowinfo = { 0 };
 
 HWND gtooltip = NULL;
@@ -74,7 +145,9 @@ static void wow_ctrlreset(HWND hwnd)
 	CTRL_DISABLE(hwnd, IDC_FOV_EDITTEXT);
 	CTRL_DISABLE(hwnd, IDC_NAMEPLATE_SLIDER);
 	CTRL_DISABLE(hwnd, IDC_NAMEPLATE_NUMBER);
-	CTRL_DISABLE(hwnd, IDC_BUTTON_SAVEAS);
+	CTRL_DISABLE(hwnd, IDC_BUTTON_APPLY);
+	CTRL_DISABLE(hwnd, IDC_CAMERA_ORIGIN);
+	CTRL_DISABLE(hwnd, IDC_CAMERA_PATCH);
 
 	// uncheck all radio box, slider, text
 	CTRL_SETCHECK(hwnd, IDC_LOOT_ORIGIN, 0);
@@ -83,6 +156,8 @@ static void wow_ctrlreset(HWND hwnd)
 	CTRL_SETCHECK(hwnd, IDC_FOV_ORIGIN, 0);
 	CTRL_SETCHECK(hwnd, IDC_FOV_WIDE, 0);
 	CTRL_SETCHECK(hwnd, IDC_FOV_ULTRA, 0);
+	CTRL_SETCHECK(hwnd, IDC_CAMERA_ORIGIN, 0);
+	CTRL_SETCHECK(hwnd, IDC_CAMERA_PATCH, 0);
 
 	CTRL_SETTEXT(hwnd, IDC_NAMEPLATE_NUMBER, L"x");
 }
@@ -104,6 +179,8 @@ static void mapping_reset(HWND hwnd)
 static void wow_analyze(HWND hwnd)
 {
 	wow_ctrlreset(hwnd);
+	struct state *state = &wowinfo.state;
+	*state = (struct state){0};
 	// quickloot
 	struct autoloot *loot = &hacks.autoloot;
 	const WORD s1 = *(WORD*)(wowinfo.content + loot->address[0]);
@@ -118,10 +195,13 @@ static void wow_analyze(HWND hwnd)
 	const WORD aways_2   = *(WORD*)loot->aways[1];
 	if (s1 == origin_1 && s2 == origin_2) {
 		CTRL_SETCHECK(hwnd, IDC_LOOT_ORIGIN, 1);
+		state->autoloot = IDC_LOOT_ORIGIN;
 	} else if (s1 == reverse_1 && s2 == reverse_2) {
 		CTRL_SETCHECK(hwnd, IDC_LOOT_REVERSE, 1);
+		state->autoloot = IDC_LOOT_REVERSE;
 	} else if (s1 == aways_1 && s2 == aways_2) {
 		CTRL_SETCHECK(hwnd, IDC_LOOT_AWAYS, 1);
+		state->autoloot = IDC_LOOT_AWAYS;
 	} else {
 		disable_loot = 1;
 	}
@@ -130,12 +210,12 @@ static void wow_analyze(HWND hwnd)
 		CTRL_ENABLE(hwnd, IDC_LOOT_REVERSE);
 		CTRL_ENABLE(hwnd, IDC_LOOT_AWAYS);
 	}
-
 	// nameplate
 	struct nameplate *plate = &hacks.nameplate;
 	const float ps = *(float*)(wowinfo.content + plate->address);
 	const BOOL disable_plate = ps < plate->fmin || ps > plate->fmax;
 	if (!disable_plate) {
+		state->distance = ps;
 		WCHAR nbuff[4];
 		_snwprintf_s(nbuff, ARRAYSIZE(nbuff), _TRUNCATE, L"%d", (DWORD)ps);
 		CTRL_ENABLE(hwnd, IDC_NAMEPLATE_SLIDER);
@@ -162,14 +242,35 @@ static void wow_analyze(HWND hwnd)
 		disable_fov = 1;
 	}
 	if (!disable_fov) {
+		state->fov = fs;
 		CTRL_ENABLE(hwnd, IDC_FOV_ORIGIN);
 		CTRL_ENABLE(hwnd, IDC_FOV_WIDE);
 		CTRL_ENABLE(hwnd, IDC_FOV_ULTRA);
 		CTRL_ENABLE(hwnd, IDC_FOV_EDITTEXT);
 	}
-	if (!disable_loot || !disable_plate) {
-		CTRL_ENABLE(hwnd, IDC_BUTTON_SAVEAS);
+	// camera glitch
+	struct camera *camera = &hacks.camera;
+	struct { DWORD origin, patch;} acc = { 0 };
+	for (DWORD i = 0; i < 5; i++) {
+		CONST BYTE *ptr = wowinfo.content + camera->address[i];
+		CONST DWORD size = camera->sizes[i];
+		CONST BYTE *origin = camera->origins[i];
+		CONST BYTE *patch = camera->patches[i];
+		if (memcmp(ptr, origin, size) == 0) {
+			acc.origin++;
+		} else if (memcmp(ptr, patch, size) == 0) {
+			acc.patch++;
+		}
 	}
+	if (acc.origin == 5) {
+		CTRL_SETCHECK(hwnd, IDC_CAMERA_ORIGIN, 1);
+		state->camera = IDC_CAMERA_ORIGIN;
+	} else if (acc.patch == 5) {
+		CTRL_SETCHECK(hwnd, IDC_CAMERA_PATCH, 1);
+		state->camera = IDC_CAMERA_PATCH;
+	}
+	CTRL_ENABLE(hwnd, IDC_CAMERA_ORIGIN);
+	CTRL_ENABLE(hwnd, IDC_CAMERA_PATCH);
 	SetFocus(hwnd);
 }
 
@@ -189,6 +290,8 @@ static void wow_open(HWND hwnd)
 	path[0] = 0;
 	if (!GetOpenFileName(&pfod))
 		return;
+	// reset
+	mapping_reset(NULL);
 	// validate version
 	if (!is_vanilla(path)) {
 		WCHAR message[64];
@@ -198,23 +301,21 @@ static void wow_open(HWND hwnd)
 		MessageBox(hwnd, message, caption, MB_ICONERROR);
 		return;
 	}
-
-	HANDLE file = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE file = CreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file == INVALID_HANDLE_VALUE)
 		goto error;
 	wowinfo.size = GetFileSize(file, NULL);
-	// reset
-	mapping_reset(NULL);
 
-	wowinfo.mapping = CreateFileMapping(file, NULL, PAGE_WRITECOPY, 0, wowinfo.size, NULL);
+	wowinfo.mapping = CreateFileMapping(file, NULL, PAGE_READWRITE, 0, wowinfo.size, NULL);
 	if (wowinfo.mapping == NULL)
 		goto error;
-	wowinfo.content = MapViewOfFile(wowinfo.mapping, FILE_MAP_COPY, 0, 0, 0);
+	wowinfo.content = MapViewOfFile(wowinfo.mapping, FILE_MAP_WRITE, 0, 0, 0);
 
 	if (!wowinfo.content)
 		goto error;
 
 	CloseHandle(file);
+	SetWindowText(hwnd, path);
 	wow_analyze(hwnd);
 	return;
 error:
@@ -244,10 +345,54 @@ static float fov_clamp(HWND hwnd)
 	return result;
 }
 
+static int wow_changed(HWND hwnd)
+{
+	struct state *state = &wowinfo.state;
+	if (state->autoloot) {
+		if (CTRL_GETCHECK(hwnd, IDC_LOOT_ORIGIN) && state->autoloot != IDC_LOOT_ORIGIN)
+			return 1;
+		if (CTRL_GETCHECK(hwnd, IDC_LOOT_REVERSE) && state->autoloot != IDC_LOOT_REVERSE)
+			return 1;
+		if (CTRL_GETCHECK(hwnd, IDC_LOOT_AWAYS) && state->autoloot != IDC_LOOT_AWAYS)
+			return 1;
+	}
+	// nameplate distance
+	if (state->distance) {
+		struct nameplate *plate = &hacks.nameplate;
+		float src = (float)(int)CTRL_SNDMSG(hwnd, IDC_NAMEPLATE_SLIDER, TBM_GETPOS, 0, 0);
+		if (src && fabsf(src - state->distance) >= 0.001)
+			return 1;
+	}
+	if (state->fov) {
+		struct fov *fov = &hacks.fov;
+		float src = 0;
+		if (CTRL_GETCHECK(hwnd, IDC_FOV_ORIGIN)) {
+			src = fov->origin;
+		} else if (CTRL_GETCHECK(hwnd, IDC_FOV_WIDE)) {
+			src = fov->wide;
+		} else if (CTRL_GETCHECK(hwnd, IDC_FOV_ULTRA)) {
+			src = fov_clamp(hwnd);
+		}
+		if (src && fabsf(src - state->fov) >= 0.001)
+			return 1;
+	}
+	if (CTRL_GETCHECK(hwnd, IDC_CAMERA_ORIGIN) && state->camera != IDC_CAMERA_ORIGIN)
+		return 1;
+	if (CTRL_GETCHECK(hwnd, IDC_CAMERA_PATCH) && state->camera != IDC_CAMERA_PATCH)
+		return 1;
+	return 0;
+}
+
+static void update_applybtn(HWND hwnd)
+{
+	EnableWindow(GetDlgItem(hwnd, IDC_BUTTON_APPLY), wow_changed(hwnd));
+}
+
 static void wow_patches(HWND hwnd)
 {
+	struct state *state = &wowinfo.state;
 	// autoloot
-	if (CTRL_IS_ENABLED(hwnd, IDC_LOOT_ORIGIN)) {
+	if (state->autoloot) {
 		struct autoloot *loot = &hacks.autoloot;
 		WORD *dst1 = (WORD*)(wowinfo.content + loot->address[0]);
 		WORD *dst2 = (WORD*)(wowinfo.content + loot->address[1]);
@@ -256,12 +401,15 @@ static void wow_patches(HWND hwnd)
 		if (CTRL_GETCHECK(hwnd, IDC_LOOT_ORIGIN)) {
 			src1 = *(WORD*)loot->origin[0];
 			src2 = *(WORD*)loot->origin[1];
+			state->autoloot = IDC_LOOT_ORIGIN;
 		} else if (CTRL_GETCHECK(hwnd, IDC_LOOT_REVERSE)) {
 			src1 = *(WORD*)loot->reverse[0];
 			src2 = *(WORD*)loot->reverse[1];
+			state->autoloot = IDC_LOOT_REVERSE;
 		} else if (CTRL_GETCHECK(hwnd, IDC_LOOT_AWAYS)) {
 			src1 = *(WORD*)loot->aways[0];
 			src2 = *(WORD*)loot->aways[1];
+			state->autoloot = IDC_LOOT_AWAYS;
 		}
 		// CMPXCHG
 		if (src1 && (src1 != *dst1 || src2 != *dst2)) {
@@ -269,16 +417,18 @@ static void wow_patches(HWND hwnd)
 			*dst2 = src2;
 		}
 	}
-	// nameplate
-	if (CTRL_IS_ENABLED(hwnd, IDC_NAMEPLATE_SLIDER)) {
+	// nameplate distance
+	if (state->distance) {
 		struct nameplate *plate = &hacks.nameplate;
 		float *dst = (float*)(wowinfo.content + plate->address);
 		float src = (float)(int)CTRL_SNDMSG(hwnd, IDC_NAMEPLATE_SLIDER, TBM_GETPOS, 0, 0);
-		if (src && fabsf(src - *dst) >= 0.001)
+		if (src && fabsf(src - *dst) >= 0.001) {
+			state->distance = src;
 			*dst = src;
+		}
 	}
 	// fov
-	if (CTRL_IS_ENABLED(hwnd, IDC_FOV_ORIGIN)) {
+	if (state->fov) {
 		struct fov *fov = &hacks.fov;
 		float *dst = (float*)(wowinfo.content + fov->address);
 		float src = 0;
@@ -289,40 +439,38 @@ static void wow_patches(HWND hwnd)
 		} else if (CTRL_GETCHECK(hwnd, IDC_FOV_ULTRA)) {
 			src = fov_clamp(hwnd);
 		}
-		if (src && fabsf(src - *dst) >= 0.001)
+		if (src && fabsf(src - *dst) >= 0.001) {
+			state->fov = src;
 			*dst = src;
+		}
+	}
+	// camera
+	struct camera *camera = &hacks.camera;
+	CONST BYTE **sources = NULL;
+	if (CTRL_GETCHECK(hwnd, IDC_CAMERA_ORIGIN) && state->camera != IDC_CAMERA_ORIGIN) {
+		sources = camera->origins;
+		state->camera = IDC_CAMERA_ORIGIN;
+	} else if (CTRL_GETCHECK(hwnd, IDC_CAMERA_PATCH) && state->camera != IDC_CAMERA_PATCH) {
+		sources = camera->patches;
+		state->camera = IDC_CAMERA_PATCH;
+	}
+	if (!sources)
+		return;
+	for (int i = 0; i < 5; i++) {
+		BYTE *dst = wowinfo.content + camera->address[i];
+		DWORD size = camera->sizes[i];
+		CopyMemory(dst, sources[i], size);
 	}
 }
 
-static void wow_saveas(HWND hwnd)
+static void wow_apply(HWND hwnd)
 {
 	if (!wowinfo.content)
 		return;
-	WCHAR path[MAX_PATH];
-	OPENFILENAME pfsd = {
-		.lStructSize = sizeof(OPENFILENAME),
-		.Flags = OFN_DONTADDTORECENT | OFN_OVERWRITEPROMPT ,
-		.lpstrFilter = L"EXE\0*.exe\0All\0*.*\0",
-		.nFilterIndex = 1,
-		.nMaxFile = sizeof(path),
-		.lpstrFile = path,
-		.hwndOwner = hwnd,
-		.lpstrDefExt = L"exe",
-	};
-	wcscpy_s(path, ARRAYSIZE(path), L"WoWX");
-	if (!GetSaveFileName(&pfsd))
-		return;
 	wow_patches(hwnd);
-	HANDLE file = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (file == INVALID_HANDLE_VALUE) {
-		MessageBox(hwnd, L"Invalid File", L"Error", MB_ICONERROR);
-		return;
-	}
-	DWORD bytes;
-	if (!(WriteFile(file, wowinfo.content, wowinfo.size, &bytes, NULL) && bytes == wowinfo.size)) {
-		MessageBox(hwnd, L"WriteFile Fails", L"Error", MB_ICONERROR);
-	}
-	CloseHandle(file);
+	FlushViewOfFile(wowinfo.content, 0);
+	update_applybtn(hwnd);
+	PlaySound((LPCTSTR)IDW_SUCCESS, NULL, SND_ASYNC | SND_NODEFAULT | SND_RESOURCE);
 }
 
 #define RC_WIDTH(rc)  ((rc)->right - (rc)->left)
@@ -348,16 +496,10 @@ LRESULT CALLBACK proc_dialog(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			BOOL value = TRUE;
 			DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &value, sizeof(value));
 		}
-		RECT rect;
-		GetWindowRect(hwnd, &rect);
-		int x = (GetSystemMetrics(SM_CXFULLSCREEN) - RC_WIDTH(&rect)) / 2;
-		int y = (GetSystemMetrics(SM_CYFULLSCREEN) - RC_HEIGHT(&rect)) / 2;
-		MoveWindow(hwnd, x, y, RC_WIDTH(&rect), RC_HEIGHT(&rect), 0);
-		SetClassLongPtr(hwnd, GCLP_HICON, (size_t)LoadIcon(NULL, IDI_APPLICATION));
+		SetClassLongPtr(hwnd, GCLP_HICON, (size_t)LoadIcon(GetModuleHandle(NULL), (LPCWSTR)IDI_APPICON));
 		// nameplate 20-41
 		CTRL_SNDMSG(hwnd, IDC_NAMEPLATE_SLIDER, TBM_SETRANGEMIN, 0, 20);
 		CTRL_SNDMSG(hwnd, IDC_NAMEPLATE_SLIDER, TBM_SETRANGEMAX, 0, 41);
-
 		// tooltip
 		gtooltip = CreateWindow(TOOLTIPS_CLASS, NULL,
 			WS_POPUP | TTS_ALWAYSTIP,
@@ -385,6 +527,7 @@ LRESULT CALLBACK proc_dialog(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			int pos = (int)CTRL_SNDMSG(hwnd, IDC_NAMEPLATE_SLIDER, TBM_GETPOS, 0, 0);
 			_snwprintf_s(nbuff, ARRAYSIZE(nbuff), _TRUNCATE, L"%d", pos);
 			CTRL_SETTEXT(hwnd, IDC_NAMEPLATE_NUMBER, nbuff);
+			update_applybtn(hwnd);
 		}
 	}
 		break;
@@ -393,8 +536,18 @@ LRESULT CALLBACK proc_dialog(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case IDC_BUTTON_OPEN:
 			wow_open(hwnd);
 			break;
-		case IDC_BUTTON_SAVEAS:
-			wow_saveas(hwnd);
+		case IDC_BUTTON_APPLY:
+			wow_apply(hwnd);
+			break;
+		case IDC_LOOT_ORIGIN:
+		case IDC_LOOT_REVERSE:
+		case IDC_LOOT_AWAYS:
+		case IDC_FOV_ORIGIN:
+		case IDC_FOV_WIDE:
+		case IDC_FOV_ULTRA:
+		case IDC_CAMERA_ORIGIN:
+		case IDC_CAMERA_PATCH:
+			update_applybtn(hwnd);
 			break;
 		}
 		break;
@@ -406,26 +559,9 @@ LRESULT CALLBACK proc_dialog(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		if (GetFocus() == GetDlgItem(hwnd, IDC_FOV_EDITTEXT)) {
 			SetFocus(hwnd);
 			fov_clamp(hwnd);
+			update_applybtn(hwnd);
 		}
 		break;
-	/* TODO : Limit the input to numbers
-	case WM_CHAR:
-	{
-		HWND edit = GetDlgItem(hwnd, IDC_FOV_EDITTEXT);
-		if (GetFocus() != edit)
-			break;
-		if (isdigit((int)wparam) || wparam == '\b') // digit & backspace
-			return TRUE;
-		if (wparam == '.') {
-			WCHAR buf[16];
-			buf[15] = 0;
-			SNDMSG(edit, WM_GETTEXT, 16, (LPARAM)buf);
-			if (wcschr(buf, '.') == NULL)
-				return TRUE;
-		}
-	}
-		break;
-	*/
 	default:
 		break;
 	}
