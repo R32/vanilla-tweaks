@@ -4,7 +4,7 @@
 //
 #define IDWCS_TITLE                     102
 #define IDWCS_EXPECTED_WOW112           103
-#define IDWCS_ERROR                     104
+
 #define IDD_VANILLA_TWEAKS              105
 
 #define IDWCS_TIP_LOOT_ORIGIN           106

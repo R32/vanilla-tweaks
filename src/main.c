@@ -295,10 +295,8 @@ static void wow_open(HWND hwnd)
 	// validate version
 	if (!is_vanilla(path)) {
 		WCHAR message[64];
-		WCHAR caption[32];
 		LoadString(NULL, IDWCS_EXPECTED_WOW112, message, ARRAYSIZE(message));
-		LoadString(NULL, IDWCS_ERROR, caption, ARRAYSIZE(caption));
-		MessageBox(hwnd, message, caption, MB_ICONERROR);
+		MessageBox(hwnd, message, NULL, MB_ICONERROR);
 		return;
 	}
 	HANDLE file = CreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -322,7 +320,7 @@ error:
 	if (file != INVALID_HANDLE_VALUE)
 		CloseHandle(file);
 	mapping_reset(hwnd);
-	MessageBox(hwnd, L"Invalid File", L"Error", MB_ICONERROR);
+	MessageBox(hwnd, L"Invalid File", NULL, MB_ICONERROR);
 	return;
 }
 
