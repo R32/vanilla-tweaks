@@ -7,13 +7,16 @@
 #define IDWCS_ERROR                     104
 #define IDD_VANILLA_TWEAKS              105
 
-#define IDWCS_AUTOLOOT_ORIGIN           106
-#define IDWCS_AUTOLOOT_REVERSE          107
-#define IDWCS_AUTOLOOT_AWAYS            108
+#define IDWCS_TIP_LOOT_ORIGIN           106
+#define IDWCS_TIP_LOOT_REVERSE          107
+#define IDWCS_TIP_LOOT_AWAYS            108
 
-#define IDWCS_FOV_ORIGIN                109
-#define IDWCS_FOV_WIDE                  110
-#define IDWCS_FOV_ULTRA                 111
+#define IDWCS_TIP_FOV_ORIGIN            109
+#define IDWCS_TIP_FOV_WIDE              110
+#define IDWCS_TIP_FOV_ULTRA             111
+
+#define IDWCS_TIP_CAMERA_ORIGIN         112
+#define IDWCS_TIP_CAMERA_PATCH          113
 
 #define IDC_LINK_SOURCE                 1001
 #define IDC_LOOT_ORIGIN                 1002

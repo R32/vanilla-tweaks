@@ -506,12 +506,14 @@ LRESULT CALLBACK proc_dialog(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 			hwnd, NULL, NULL, NULL
 		);
-		add_tooltip(gtooltip, hwnd, IDC_LOOT_ORIGIN, (LPWSTR)IDWCS_AUTOLOOT_ORIGIN);
-		add_tooltip(gtooltip, hwnd, IDC_LOOT_REVERSE, (LPWSTR)IDWCS_AUTOLOOT_REVERSE);
-		add_tooltip(gtooltip, hwnd, IDC_LOOT_AWAYS, (LPWSTR)IDWCS_AUTOLOOT_AWAYS);
-		add_tooltip(gtooltip, hwnd, IDC_FOV_ORIGIN, (LPWSTR)IDWCS_FOV_ORIGIN);
-		add_tooltip(gtooltip, hwnd, IDC_FOV_WIDE, (LPWSTR)IDWCS_FOV_WIDE);
-		add_tooltip(gtooltip, hwnd, IDC_FOV_ULTRA, (LPWSTR)IDWCS_FOV_ULTRA);
+		add_tooltip(gtooltip, hwnd, IDC_LOOT_ORIGIN, (LPWSTR)IDWCS_TIP_LOOT_ORIGIN);
+		add_tooltip(gtooltip, hwnd, IDC_LOOT_REVERSE, (LPWSTR)IDWCS_TIP_LOOT_REVERSE);
+		add_tooltip(gtooltip, hwnd, IDC_LOOT_AWAYS, (LPWSTR)IDWCS_TIP_LOOT_AWAYS);
+		add_tooltip(gtooltip, hwnd, IDC_FOV_ORIGIN, (LPWSTR)IDWCS_TIP_FOV_ORIGIN);
+		add_tooltip(gtooltip, hwnd, IDC_FOV_WIDE, (LPWSTR)IDWCS_TIP_FOV_WIDE);
+		add_tooltip(gtooltip, hwnd, IDC_FOV_ULTRA, (LPWSTR)IDWCS_TIP_FOV_ULTRA);
+		add_tooltip(gtooltip, hwnd, IDC_CAMERA_ORIGIN, (LPWSTR)IDWCS_TIP_CAMERA_ORIGIN);
+		add_tooltip(gtooltip, hwnd, IDC_CAMERA_PATCH, (LPWSTR)IDWCS_TIP_CAMERA_PATCH);
 		// edit default value
 		CTRL_SETTEXT(hwnd, IDC_FOV_EDITTEXT, L"2.10");
 	}

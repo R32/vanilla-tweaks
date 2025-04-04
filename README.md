@@ -9,21 +9,21 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
 ## Usage
 
-1. Click the `Open` button to locate WoW.exe 1.12
+1. Click `Open` to locate WoW.exe.
 
-2. Adjust via controls(Those controls are updated based on the actual value of the WoW.exe file)
+2. Adjust via the controls.
 
-3. Click the `Sava as` button to save
+3. Click `Apply` to save changes to the file.
 
 ## Current patches
 
 - Autoloot
 
-  - `Origin` : Hold the `Shift` key to pick up items automatically
+  - `Origin` : Hold `shift` to loot automatically
 
-  - `Reverse` : Hold the `Shift` key to pick up items **manually**.
+  - `Reverse` : Hold `shift` to loot **manually**.
 
-  - `Aways` : Aways pick up items automatically.
+  - `Always` : Always loot automatically.
 
 - Nameplate Distance : Adjust the distance of the nameplate to 20~41 yards
 
@@ -33,7 +33,7 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
   - `Wide`   : 1.925
 
-  - `Custom` : 2.1 (customizable)
+  - `Custom` : 2.1 (2.1 may work for ultrawide - adjust as needed)
 
 - Camera Glitch :
 
@@ -74,7 +74,7 @@ downloads : [vanilla-tweaks-gui.exe](https://github.com/R32/vanilla-tweaks/relea
 
     > 如果控件不可用, 说明要修改的 WoW.exe 文件被别的工具修改过
 
-3. 点击 "另存为" 按钮将会弹出一个对话框用于保存当前修改
+3. 点击 "应用" 按钮保存修改到文件
 
 ## 功能
 
